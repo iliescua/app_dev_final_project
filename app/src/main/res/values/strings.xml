@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FlashBoard</string>
+    <string name="speed">Speed</string>
+    <string name="log_data">Log Data</string>
 </resources>
