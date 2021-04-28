@@ -7,5 +7,7 @@ information can be logged at the users discretion so that they may
 keep an up to date record of this information. 
 
 Minimum SDK Android 6.0 (Marshmallow) API 23
+
 Designed and built on the Google Pixel 4 AVD
+
 Tested on Google Pixel 4a device
