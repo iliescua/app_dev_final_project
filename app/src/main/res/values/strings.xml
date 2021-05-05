@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">FlashBoard</string>
-    <string name="speed">Speed</string>
+    <string name="speed">999</string>
     <string name="log_data">Log Data</string>
     <string name="mph">MPH</string>
 </resources>
