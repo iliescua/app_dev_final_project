@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Realm.init(this);
         coordDB = Realm.getDefaultInstance();
 
-        updateGMeter();
 
         //Check to ensure necessary permissions provided
         if (!hasPermissions()) {
@@ -102,10 +101,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float x_accel = event.values[0];
-            float y_accel = event.values[1];
-            float z_accel = event.values[2];
+            accelXZ[0] = event.values[0];
+            accelXZ[1] = event.values[2];
+            //float y_accel = event.values[1];
             //TODO Use accel data to update G-Meter
+
+            //Update the GUI display with this!
+            updateGMeter();
         }
     }
 
@@ -134,8 +136,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         };
     }
 
+    /**
+     *  This is a helper method to update the point of the GMeter on the display
+     */
     private void updateGMeter() {
-        gMeter.updatePoint(1.0f, 1.0f);
+        gMeter.updatePoint(accelXZ[0], accelXZ[1]);
     }
 
     /**
