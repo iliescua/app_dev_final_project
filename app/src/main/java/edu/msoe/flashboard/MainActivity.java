@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int PERMISSIONS_ALL = 1;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
+    private GMeter gMeter;
 
     /**
      * This method is run when the app is first launched and sets everything up
@@ -59,8 +60,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        gMeter = findViewById(R.id.g_meter);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         speedTB = findViewById(R.id.speedTB);
         FusedLocationProviderClient flpc = LocationServices.getFusedLocationProviderClient(this);
         Realm.init(this);
