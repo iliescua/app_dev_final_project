@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Realm.init(this);
         coordDB = Realm.getDefaultInstance();
 
+        accelXZ = new float[4];
+
 
         //Check to ensure necessary permissions provided
         if (!hasPermissions()) {
