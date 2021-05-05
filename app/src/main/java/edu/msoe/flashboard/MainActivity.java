@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
     private GMeter gMeter;
+    private float[] accelXZ;
 
     /**
      * This method is run when the app is first launched and sets everything up
@@ -68,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         FusedLocationProviderClient flpc = LocationServices.getFusedLocationProviderClient(this);
         Realm.init(this);
         coordDB = Realm.getDefaultInstance();
+
+        updateGMeter();
 
         //Check to ensure necessary permissions provided
         if (!hasPermissions()) {
@@ -129,6 +132,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 speedTB.setText(Integer.toString((int) (location.getSpeed() * CONVERSION_FACTOR)));
             }
         };
+    }
+
+    private void updateGMeter() {
+        gMeter.updatePoint(1.0f, 1.0f);
     }
 
     /**
