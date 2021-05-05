@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      *  This is a helper method to update the point of the GMeter on the display
      */
     private void updateGMeter() {
-        gMeter.updatePoint(accelXZ[0], accelXZ[1]);
+        gMeter.updatePoint(accelXZ[0], accelXZ[2]);
     }
 
     /**
