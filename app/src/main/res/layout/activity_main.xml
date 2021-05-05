@@ -22,14 +22,14 @@
 
     <TextView
         android:id="@+id/speedTB"
-        android:layout_width="212dp"
-        android:layout_height="132dp"
+        android:layout_width="244dp"
+        android:layout_height="141dp"
         android:gravity="center"
         android:hint="@string/speed"
         android:text=""
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="112sp"
+        android:textSize="130sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toStartOf="@+id/mphTB"
