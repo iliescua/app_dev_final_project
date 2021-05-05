@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         //Register accelerometer sensor
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_UI);
 
         //Register location requests
@@ -102,9 +102,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             accelXZ[0] = event.values[0];
-            accelXZ[1] = event.values[2];
+            accelXZ[1] = event.values[1];
+            accelXZ[2] = event.values[2];
             //float y_accel = event.values[1];
             //TODO Use accel data to update G-Meter
 
