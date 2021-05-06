@@ -45,10 +45,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final float CONVERSION_FACTOR = 2.23694f;
     private TextView speedTB;
     private static final int PERMISSIONS_ALL = 1;
-    private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
     private GMeter gMeter;
     private float[] accelXZ;
+    private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
 
     /**
      * This method is run when the app is first launched and sets everything up
@@ -64,14 +64,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         gMeter = findViewById(R.id.g_meter);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         speedTB = findViewById(R.id.speedTB);
         FusedLocationProviderClient flpc = LocationServices.getFusedLocationProviderClient(this);
         Realm.init(this);
         coordDB = Realm.getDefaultInstance();
-
         accelXZ = new float[4];
-
 
         //Check to ensure necessary permissions provided
         if (!hasPermissions()) {
@@ -106,17 +103,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accelXZ[0] = event.values[0];
             accelXZ[1] = event.values[1];
             accelXZ[2] = event.values[2];
-            //float y_accel = event.values[1];
-            //TODO Use accel data to update G-Meter
 
             //Update the GUI display with this!
-            updateGMeter();
+            gMeter.updatePoint(accelXZ[0], accelXZ[2]);
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 
     /**
@@ -134,16 +128,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 coordData.setLatitude(location.getLatitude());
                 coordData.setAltitude(location.getAltitude());
                 coordDB.commitTransaction();
+                //Display the mph to the screen
                 speedTB.setText(Integer.toString((int) (location.getSpeed() * CONVERSION_FACTOR)));
             }
         };
-    }
-
-    /**
-     *  This is a helper method to update the point of the GMeter on the display
-     */
-    private void updateGMeter() {
-        gMeter.updatePoint(accelXZ[0], accelXZ[2]);
     }
 
     /**
