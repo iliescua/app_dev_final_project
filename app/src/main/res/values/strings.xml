@@ -3,4 +3,6 @@
     <string name="speed">999</string>
     <string name="log_data">Log Data</string>
     <string name="mph">MPH</string>
+    <string name="export_data">Export Data</string>
+    <string name="view_map">View Map</string>
 </resources>

@@ -4,6 +4,11 @@
     <item
         android:id="@+id/item_test"
         android:textColor="@color/black"
-        android:title="testing"
+        android:title="@string/view_map"
+        app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/item_export"
+        android:textColor="@color/black"
+        android:title="@string/export_data"
         app:showAsAction="collapseActionView" />
 </menu>
