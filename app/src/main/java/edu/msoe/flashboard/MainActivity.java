@@ -37,6 +37,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+
 import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
