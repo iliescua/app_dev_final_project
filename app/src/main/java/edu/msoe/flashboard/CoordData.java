@@ -12,7 +12,7 @@ public class CoordData extends RealmObject {
     private double accelY;
     private double accelZ;
 
-    private double timeStamp;
+    private String timeStamp;
 
     public CoordData() {
     }

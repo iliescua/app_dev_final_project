@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private GMeter gMeter;
     private float[] accelXZ;
     private double[] lastCords;
+    private long myCurrentTimeMillis;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
 
@@ -106,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accelXZ[1] = event.values[1];
             accelXZ[2] = event.values[2];
 
+            myCurrentTimeMillis = System.currentTimeMillis();
+
             //Update the GUI display with this!
             gMeter.updatePoint(accelXZ[0], accelXZ[2]);
 
@@ -119,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             coordData.setAccelX(event.values[0]);
             coordData.setAccelY(event.values[1]);
             coordData.setAccelZ(event.values[2]);
+            coordData.setTimeStamp(myCurrentTimeMillis);
 
             coordDB.commitTransaction();
 
