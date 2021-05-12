@@ -40,6 +40,12 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.opencsv.CSVWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -56,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private long myCurrentTimeMillis;
     private boolean isLogging = false;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
+            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     /**
      * This method is run when the app is first launched and sets everything up
@@ -110,7 +117,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //Save log to file if logging enabled -> logging disabled
                 if (isLogging == true){
                     //Save current log data to file
-                    saveDBToFile();
+                    try {
+                        saveDBToFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     //Set logging flag to false
                     isLogging = simpleSwitch.isChecked();
                 } else{ // Enable logging if disabled -> enabled
@@ -146,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //Create a DB entry of all sensor data for this timestamp
                 coordDB.beginTransaction();
                 CoordData coordData = coordDB.createObject(CoordData.class);
-                coordData.setTimeStamp((Long.toString(myCurrentTimeMillis)));
+                coordData.setTimeStamp(myCurrentTimeMillis);
                 coordData.setLongitude(lastCords[0]);
                 coordData.setLatitude(lastCords[1]);
                 coordData.setAltitude(lastCords[2]);
@@ -161,15 +172,42 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     //Save current DB to file
-    public void saveDBToFile(){
+    public void saveDBToFile() throws IOException {
+        //Setup CSV file writing stuffs
+        String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+        String fileName = "AnalysisData.csv";
+        String filePath = baseDir + File.separator + fileName;
+        File f = new File(filePath);
+        FileWriter mFileWriter = new FileWriter(filePath , true);
+        CSVWriter writer;
+
+        // File exist
+        if(f.exists()&&!f.isDirectory())
+        {
+            mFileWriter = new FileWriter(filePath, true);
+            writer = new CSVWriter(mFileWriter);
+        }
+        else
+        {
+            writer = new CSVWriter(new FileWriter(filePath));
+        }
+
+        //Create a header line in the CSV file
+        String[] firstLine = {"Timestamp (in ms)", "Latitude", "Longitude", "Bearing (Degrees)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
+        writer.writeNext(firstLine);
         // Grab all data from the DB in question (coordDB):
-        RealmResults<CoordData> session = coordDB.where(CoordData.class).findAll();;
+        RealmResults<CoordData> session = coordDB.where(CoordData.class).findAll();
 
         //Loop through the database and write to file as we go
         int i = 0;
         for(CoordData data : session){
+            String[] currentLine = {Long.toString(data.getTimeStamp()), Double.toString(data.getLatitude()), Double.toString(data.getLongitude()), Double.toString(data.getBearing()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
+            //new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").formatter.format(data.getTimeStamp())
+            writer.writeNext(currentLine);
             i++;
         }
+
+        writer.close();
     }
 
     @Override
