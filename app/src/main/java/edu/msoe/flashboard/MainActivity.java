@@ -46,6 +46,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -175,7 +177,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void saveDBToFile() throws IOException {
         //Setup CSV file writing stuffs
         String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
-        String fileName = "AnalysisData.csv";
+        Date currentTime = Calendar.getInstance().getTime();
+        String fileName = currentTime + " LogData.csv";
         String filePath = baseDir + File.separator + fileName;
         File f = new File(filePath);
         FileWriter mFileWriter = new FileWriter(filePath , true);
@@ -195,7 +198,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //Create a header line in the CSV file
         String[] firstLine = {"Timestamp (in ms)", "Latitude", "Longitude", "Bearing (Degrees)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
         writer.writeNext(firstLine);
-        // Grab all data from the DB in question (coordDB):
+
+        // Grab all data from the DB (coordDB)
         RealmResults<CoordData> session = coordDB.where(CoordData.class).findAll();
 
         //Loop through the database and write to file as we go
