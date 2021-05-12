@@ -11,7 +11,9 @@ package edu.msoe.flashboard;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -23,6 +25,8 @@ import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +42,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private Realm coordDB;
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float[] accelXZ;
     private double[] lastCords;
     private long myCurrentTimeMillis;
+    private boolean isLogging = false;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
 
@@ -66,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         gMeter = findViewById(R.id.g_meter);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Switch simpleSwitch = (Switch) findViewById(R.id.switch_logging);
         speedTB = findViewById(R.id.speedTB);
         FusedLocationProviderClient flpc = LocationServices.getFusedLocationProviderClient(this);
         Realm.init(this);
@@ -92,6 +99,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         startLocationUpdates();
         flpc.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+
+
+
+        //Listener for Logging Data switch/toggle
+        findViewById(R.id.switch_logging).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //Save log to file if logging enabled -> logging disabled
+                if (isLogging == true){
+                    //Save current log data to file
+                    saveDBToFile();
+                    //Set logging flag to false
+                    isLogging = simpleSwitch.isChecked();
+                } else{ // Enable logging if disabled -> enabled
+                    //Set logging flag to true
+                    isLogging = simpleSwitch.isChecked();
+                }
+
+
+            }
+        });
     }
 
     /**
@@ -112,20 +141,34 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             //Update the GUI display with this!
             gMeter.updatePoint(accelXZ[0], accelXZ[2]);
 
-            //SAVE THIS SNIPPET
-            coordDB.beginTransaction();
-            CoordData coordData = coordDB.createObject(CoordData.class);
-            coordData.setLongitude(lastCords[0]);
-            coordData.setLatitude(lastCords[1]);
-            coordData.setAltitude(lastCords[2]);
-            coordData.setBearing(lastCords[3]);
-            coordData.setAccelX(event.values[0]);
-            coordData.setAccelY(event.values[1]);
-            coordData.setAccelZ(event.values[2]);
-            coordData.setTimeStamp(myCurrentTimeMillis);
+            //Log data if toggle is enabled
+            if(isLogging == true){
+                //Create a DB entry of all sensor data for this timestamp
+                coordDB.beginTransaction();
+                CoordData coordData = coordDB.createObject(CoordData.class);
+                coordData.setTimeStamp((Long.toString(myCurrentTimeMillis)));
+                coordData.setLongitude(lastCords[0]);
+                coordData.setLatitude(lastCords[1]);
+                coordData.setAltitude(lastCords[2]);
+                coordData.setBearing(lastCords[3]);
+                coordData.setAccelX(event.values[0]);
+                coordData.setAccelY(event.values[1]);
+                coordData.setAccelZ(event.values[2]);
+                coordDB.commitTransaction();
+            }
 
-            coordDB.commitTransaction();
+        }
+    }
 
+    //Save current DB to file
+    public void saveDBToFile(){
+        // Grab all data from the DB in question (coordDB):
+        RealmResults<CoordData> session = coordDB.where(CoordData.class).findAll();;
+
+        //Loop through the database and write to file as we go
+        int i = 0;
+        for(CoordData data : session){
+            i++;
         }
     }
 
