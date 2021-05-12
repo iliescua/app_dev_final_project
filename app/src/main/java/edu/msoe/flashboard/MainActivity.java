@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int PERMISSIONS_ALL = 1;
     private GMeter gMeter;
     private float[] accelXZ;
+    private double[] lastCords;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET};
 
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Realm.init(this);
         coordDB = Realm.getDefaultInstance();
         accelXZ = new float[4];
+        lastCords = new double[4];
 
         //Check to ensure necessary permissions provided
         if (!hasPermissions()) {
@@ -106,6 +108,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             //Update the GUI display with this!
             gMeter.updatePoint(accelXZ[0], accelXZ[2]);
+
+            //SAVE THIS SNIPPET
+            coordDB.beginTransaction();
+            CoordData coordData = coordDB.createObject(CoordData.class);
+            coordData.setLongitude(lastCords[0]);
+            coordData.setLatitude(lastCords[1]);
+            coordData.setAltitude(lastCords[2]);
+            coordData.setBearing(lastCords[3]);
+            coordData.setAccelX(event.values[0]);
+            coordData.setAccelY(event.values[1]);
+            coordData.setAccelZ(event.values[2]);
+
+            coordDB.commitTransaction();
+
         }
     }
 
@@ -122,14 +138,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
-                coordDB.beginTransaction();
-                CoordData coordData = coordDB.createObject(CoordData.class);
-                coordData.setLongitude(location.getLongitude());
-                coordData.setLatitude(location.getLatitude());
-                coordData.setAltitude(location.getAltitude());
-                coordDB.commitTransaction();
+                lastCords[0] = location.getLongitude();
+                lastCords[1] = location.getLatitude();
+                lastCords[2] = location.getAltitude();
+                lastCords[3] = location.getBearing();
+
                 //Display the mph to the screen
                 speedTB.setText(Integer.toString((int) (location.getSpeed() * CONVERSION_FACTOR)));
+
+
             }
         };
     }
