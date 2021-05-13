@@ -1,8 +1,8 @@
 # app_dev_final_project
 
 ## Authors
-Andrew Iliescu
-Sam Jansen
+* Andrew Iliescu
+* Sam Jansen
 
 ## Information
 This app was created by Andrew Iliescu and Sam Jansen. Its
