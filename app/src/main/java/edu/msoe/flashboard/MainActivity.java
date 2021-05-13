@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //Create a header line in the CSV file
-        String[] firstLine = {"Timestamp (in ms)", "Latitude", "Longitude", "Bearing (Degrees)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
+        String[] firstLine = {"Timestamp (ms)", "Latitude", "Longitude", "Altitude (m)", "Bearing (Degrees)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
         writer.writeNext(firstLine);
 
         // Grab all data from the DB (coordDB)
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //Loop through the database and write to file as we go
         int i = 0;
         for(CoordData data : session){
-            String[] currentLine = {Long.toString(data.getTimeStamp()), Double.toString(data.getLatitude()), Double.toString(data.getLongitude()), Double.toString(data.getBearing()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
+            String[] currentLine = {Long.toString(data.getTimeStamp()), Double.toString(data.getLatitude()), Double.toString(data.getLongitude()), Double.toString(data.getAltitude()), Double.toString(data.getBearing()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
             //new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").formatter.format(data.getTimeStamp())
             writer.writeNext(currentLine);
             i++;
