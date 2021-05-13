@@ -18,7 +18,7 @@ keep an up to date record of this information.
 * See edu.msoe.flashboard.GMeter.java comments for more details
 
 ## SDK Version
-Minimum SDK Android 6.0 (Marshmallow) API 23
+* Minimum SDK Android 6.0 (Marshmallow) API 23
 
 ## Executing program and testing
  * Designed and built on the Google Pixel 4 AVD
