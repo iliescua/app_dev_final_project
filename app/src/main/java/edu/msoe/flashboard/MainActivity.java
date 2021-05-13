@@ -12,6 +12,7 @@ package edu.msoe.flashboard;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         gMeter = findViewById(R.id.g_meter);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Switch simpleSwitch = (Switch) findViewById(R.id.switch_logging);
+        Switch simpleSwitch = findViewById(R.id.switch_logging);
         speedTB = findViewById(R.id.speedTB);
         FusedLocationProviderClient flpc = LocationServices.getFusedLocationProviderClient(this);
         Realm.init(this);
@@ -164,7 +165,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //Create a header line in the CSV file
-        String[] firstLine = {"Timestamp (ms)", "Latitude", "Longitude", "Altitude (m)", "Bearing (Degrees)", "Speed (kmh)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
+        String[] firstLine = {"Timestamp (ms)", "Latitude", "Longitude", "Altitude (m)", "Bearing (Degrees)",
+                "Speed (kmh)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
         writer.writeNext(firstLine);
 
         // Grab all data from the DB (coordDB)
@@ -172,7 +174,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         //Loop through the database and write to file as we go
         for (CoordData data : session) {
-            String[] currentLine = {Long.toString(data.getTimeStamp()), Double.toString(data.getLatitude()), Double.toString(data.getLongitude()), Double.toString(data.getAltitude()), Double.toString(data.getBearing()), Double.toString(data.getSpeed()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
+            String[] currentLine = {Long.toString(data.getTimeStamp()), Double.toString(data.getLatitude()),
+                    Double.toString(data.getLongitude()), Double.toString(data.getAltitude()), Double.toString(data.getBearing()),
+                    Double.toString(data.getSpeed()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
             //new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").formatter.format(data.getTimeStamp())
             writer.writeNext(currentLine);
         }
@@ -213,8 +217,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     coordData.setAccelZ(accelXZ[2]);
                     coordDB.commitTransaction();
                 }
-
-
             }
         };
     }
@@ -240,7 +242,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //TODO
+        if(item.getItemId() == R.id.item_navMap){
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
+        } else if (item.getItemId() == R.id.item_clearDB){
+            //TODO Clear DB
+        }
         return true;
     }
 
