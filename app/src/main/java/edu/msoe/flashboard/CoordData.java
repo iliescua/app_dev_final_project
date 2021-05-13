@@ -7,10 +7,12 @@ public class CoordData extends RealmObject {
     private double latitude;
     private double altitude;
     private double bearing;
+    private double speed;
 
     private double accelX;
     private double accelY;
     private double accelZ;
+
 
 
     private long timeStamp;
@@ -86,5 +88,13 @@ public class CoordData extends RealmObject {
 
     public void setBearing(double bearing) {
         this.bearing = bearing;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 }

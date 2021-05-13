@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int PERMISSIONS_ALL = 1;
     private GMeter gMeter;
     private float[] accelXZ;
-    private double[] lastCords;
+    private long myCurrentTimeMillis;
     private boolean isLogging = false;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Realm.init(this);
         coordDB = Realm.getDefaultInstance();
         accelXZ = new float[4];
-        lastCords = new double[4];
 
         //Check to ensure necessary permissions provided
         if (!hasPermissions()) {
@@ -139,26 +138,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accelXZ[1] = event.values[1];
             accelXZ[2] = event.values[2];
 
-            long myCurrentTimeMillis = System.currentTimeMillis();
-
             //Update the GUI display with this!
             gMeter.updatePoint(accelXZ[0], accelXZ[2]);
-
-            //Log data if toggle is enabled
-            if (isLogging) {
-                //Create a DB entry of all sensor data for this timestamp
-                coordDB.beginTransaction();
-                CoordData coordData = coordDB.createObject(CoordData.class);
-                coordData.setTimeStamp(myCurrentTimeMillis);
-                coordData.setLongitude(lastCords[0]);
-                coordData.setLatitude(lastCords[1]);
-                coordData.setAltitude(lastCords[2]);
-                coordData.setBearing(lastCords[3]);
-                coordData.setAccelX(event.values[0]);
-                coordData.setAccelY(event.values[1]);
-                coordData.setAccelZ(event.values[2]);
-                coordDB.commitTransaction();
-            }
         }
     }
 
@@ -183,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //Create a header line in the CSV file
-        String[] firstLine = {"Timestamp (ms)", "Latitude", "Longitude", "Altitude (m)", "Bearing (Degrees)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
+        String[] firstLine = {"Timestamp (ms)", "Latitude", "Longitude", "Altitude (m)", "Bearing (Degrees)", "Speed (kmh)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
         writer.writeNext(firstLine);
 
         // Grab all data from the DB (coordDB)
@@ -191,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         //Loop through the database and write to file as we go
         for (CoordData data : session) {
-            String[] currentLine = {Long.toString(data.getTimeStamp()), Double.toString(data.getLatitude()), Double.toString(data.getLongitude()), Double.toString(data.getAltitude()), Double.toString(data.getBearing()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
+            String[] currentLine = {Long.toString(data.getTimeStamp()), Double.toString(data.getLatitude()), Double.toString(data.getLongitude()), Double.toString(data.getAltitude()), Double.toString(data.getBearing()), Double.toString(data.getSpeed()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
             //new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").formatter.format(data.getTimeStamp())
             writer.writeNext(currentLine);
         }
@@ -211,13 +192,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
-                lastCords[0] = location.getLongitude();
-                lastCords[1] = location.getLatitude();
-                lastCords[2] = location.getAltitude();
-                lastCords[3] = location.getBearing();
 
                 //Display the mph to the screen
                 speedTB.setText(Integer.toString((int) (location.getSpeed() * CONVERSION_FACTOR)));
+
+                //Log data if toggle is enabled
+                myCurrentTimeMillis = System.currentTimeMillis();
+                if (isLogging) {
+                    //Create a DB entry of all sensor data for this timestamp
+                    coordDB.beginTransaction();
+                    CoordData coordData = coordDB.createObject(CoordData.class);
+                    coordData.setTimeStamp(myCurrentTimeMillis);
+                    coordData.setLongitude(location.getLongitude());
+                    coordData.setLatitude(location.getLatitude());
+                    coordData.setAltitude(location.getAltitude());
+                    coordData.setBearing(location.getBearing());
+                    coordData.setSpeed(location.getSpeed());
+                    coordData.setAccelX(accelXZ[0]);
+                    coordData.setAccelY(accelXZ[1]);
+                    coordData.setAccelZ(accelXZ[2]);
+                    coordDB.commitTransaction();
+                }
+
+
             }
         };
     }
