@@ -11,9 +11,7 @@ package edu.msoe.flashboard;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -25,7 +23,6 @@ import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +42,6 @@ import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -61,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private GMeter gMeter;
     private float[] accelXZ;
     private double[] lastCords;
-    private long myCurrentTimeMillis;
     private boolean isLogging = false;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
@@ -72,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      *
      * @param savedInstanceState the current saved state of the app
      */
-    @SuppressLint("MissingPermission")
+    @SuppressLint({"MissingPermission", "UseSwitchCompatOrMaterialCode"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,36 +103,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // We don't really need this, in fact we want as steady as possible
         //locationRequest.setFastestInterval(1);
-
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         startLocationUpdates();
         flpc.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
 
-
-
         //Listener for Logging Data switch/toggle
-        findViewById(R.id.switch_logging).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //Save log to file if logging enabled -> logging disabled
-                if (isLogging == true){
-                    //Save current log data to file
-                    try {
-                        saveDBToFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //Set logging flag to false
-                    isLogging = simpleSwitch.isChecked();
-                } else{ // Enable logging if disabled -> enabled
-                    //Set logging flag to true
-                    isLogging = simpleSwitch.isChecked();
+        findViewById(R.id.switch_logging).setOnClickListener(view -> {
+            //Save log to file if logging enabled -> logging disabled
+            if (isLogging) {
+                //Save current log data to file
+                try {
+                    saveDBToFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                //Set logging flag to false
+            }  // Enable logging if disabled -> enabled
+            //Set logging flag to true
 
-
-            }
+            isLogging = simpleSwitch.isChecked();
         });
     }
 
@@ -154,13 +139,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accelXZ[1] = event.values[1];
             accelXZ[2] = event.values[2];
 
-            myCurrentTimeMillis = System.currentTimeMillis();
+            long myCurrentTimeMillis = System.currentTimeMillis();
 
             //Update the GUI display with this!
             gMeter.updatePoint(accelXZ[0], accelXZ[2]);
 
             //Log data if toggle is enabled
-            if(isLogging == true){
+            if (isLogging) {
                 //Create a DB entry of all sensor data for this timestamp
                 coordDB.beginTransaction();
                 CoordData coordData = coordDB.createObject(CoordData.class);
@@ -174,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 coordData.setAccelZ(event.values[2]);
                 coordDB.commitTransaction();
             }
-
         }
     }
 
@@ -186,17 +170,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String fileName = currentTime + " LogData.csv";
         String filePath = baseDir + File.separator + fileName;
         File f = new File(filePath);
-        FileWriter mFileWriter = new FileWriter(filePath , true);
+        new FileWriter(filePath, true);
+        FileWriter mFileWriter;
         CSVWriter writer;
 
         // File exist
-        if(f.exists()&&!f.isDirectory())
-        {
+        if (f.exists() && !f.isDirectory()) {
             mFileWriter = new FileWriter(filePath, true);
             writer = new CSVWriter(mFileWriter);
-        }
-        else
-        {
+        } else {
             writer = new CSVWriter(new FileWriter(filePath));
         }
 
@@ -208,14 +190,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         RealmResults<CoordData> session = coordDB.where(CoordData.class).findAll();
 
         //Loop through the database and write to file as we go
-        int i = 0;
-        for(CoordData data : session){
+        for (CoordData data : session) {
             String[] currentLine = {Long.toString(data.getTimeStamp()), Double.toString(data.getLatitude()), Double.toString(data.getLongitude()), Double.toString(data.getAltitude()), Double.toString(data.getBearing()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
             //new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").formatter.format(data.getTimeStamp())
             writer.writeNext(currentLine);
-            i++;
         }
-
         writer.close();
     }
 
@@ -239,8 +218,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 //Display the mph to the screen
                 speedTB.setText(Integer.toString((int) (location.getSpeed() * CONVERSION_FACTOR)));
-
-
             }
         };
     }
