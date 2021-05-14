@@ -15,7 +15,7 @@ public class CoordData extends RealmObject {
 
 
 
-    private long timeStamp;
+    private String timeStamp;
 
     public CoordData() {
     }
@@ -74,11 +74,11 @@ public class CoordData extends RealmObject {
         this.accelZ = accelZ;
     }
 
-    public long getTimeStamp() {
+    public String getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(long timeStamp) {
+    public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
 

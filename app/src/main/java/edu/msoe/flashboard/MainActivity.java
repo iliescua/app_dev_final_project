@@ -43,6 +43,7 @@ import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -57,11 +58,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int PERMISSIONS_ALL = 1;
     private GMeter gMeter;
     private float[] accelXZ;
-    private long myCurrentTimeMillis;
+    private String currentTime;
     private boolean isLogging = false;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
 
     /**
      * This method is run when the app is first launched and sets everything up
@@ -115,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //Save current log data to file
                 try {
                     saveDBToFile();
+                    Toast.makeText(this, "Log files saved!", Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -166,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         //Create a header line in the CSV file
         String[] firstLine = {"Timestamp (ms)", "Latitude", "Longitude", "Altitude (m)", "Bearing (Degrees)",
-                "Speed (kmh)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
+                "Speed (mph)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
         writer.writeNext(firstLine);
 
         // Grab all data from the DB (coordDB)
@@ -174,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         //Loop through the database and write to file as we go
         for (CoordData data : session) {
-            String[] currentLine = {Long.toString(data.getTimeStamp()), Double.toString(data.getLatitude()),
+            String[] currentLine = {data.getTimeStamp(), Double.toString(data.getLatitude()),
                     Double.toString(data.getLongitude()), Double.toString(data.getAltitude()), Double.toString(data.getBearing()),
                     Double.toString(data.getSpeed()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
             //new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").formatter.format(data.getTimeStamp())
@@ -201,17 +204,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 speedTB.setText(Integer.toString((int) (location.getSpeed() * CONVERSION_FACTOR)));
 
                 //Log data if toggle is enabled
-                myCurrentTimeMillis = System.currentTimeMillis();
                 if (isLogging) {
                     //Create a DB entry of all sensor data for this timestamp
                     coordDB.beginTransaction();
                     CoordData coordData = coordDB.createObject(CoordData.class);
-                    coordData.setTimeStamp(myCurrentTimeMillis);
+                    coordData.setTimeStamp(new SimpleDateFormat("HH:mm:ss.SSS").format(new Date()));
                     coordData.setLongitude(location.getLongitude());
                     coordData.setLatitude(location.getLatitude());
                     coordData.setAltitude(location.getAltitude());
                     coordData.setBearing(location.getBearing());
-                    coordData.setSpeed(location.getSpeed());
+                    coordData.setSpeed((location.getSpeed() * CONVERSION_FACTOR));
                     coordData.setAccelX(accelXZ[0]);
                     coordData.setAccelY(accelXZ[1]);
                     coordData.setAccelZ(accelXZ[2]);
@@ -246,7 +248,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Intent intent = new Intent(this, MapsActivity.class);
             startActivity(intent);
         } else if (item.getItemId() == R.id.item_clearDB){
-            //TODO Clear DB
+            //Clear out the database
+            Toast.makeText(this, "Database Cleared!", Toast.LENGTH_LONG).show();
+            RealmResults<CoordData> session = coordDB.where(CoordData.class).findAll();
+            coordDB.beginTransaction();
+            session.deleteAllFromRealm();
+            coordDB.commitTransaction();
         }
         return true;
     }
