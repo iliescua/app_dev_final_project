@@ -20,10 +20,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private boolean isLogging = false;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
 
     /**
      * This method is run when the app is first launched and sets everything up
@@ -73,7 +75,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        //Check to ensure necessary permissions provided
+        if (!hasPermissions()) {
+            Toast.makeText(this, "Please allow permissions if you haven't already", Toast.LENGTH_LONG).show();
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSIONS_ALL);
+        }
         gMeter = findViewById(R.id.g_meter);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,11 +92,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         coordDB = Realm.getDefaultInstance();
         accelXZ = new float[4];
 
-        //Check to ensure necessary permissions provided
-        if (!hasPermissions()) {
-            Toast.makeText(this, "Please allow permissions if you haven't already", Toast.LENGTH_LONG).show();
-            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSIONS_ALL);
-        }
+
 
         //Register accelerometer sensor
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -115,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //Save current log data to file
                 try {
                     saveDBToFile();
-                    Toast.makeText(this, "Log files saved!", Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -147,8 +150,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     //Save current DB to file
     public void saveDBToFile() throws IOException {
+        Context context = getApplicationContext();
+
         //Setup CSV file writing stuffs
-        String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+        String baseDir = context.getExternalFilesDir(null).getAbsolutePath();
         Date currentTime = Calendar.getInstance().getTime();
         String fileName = currentTime + " LogData.csv";
         String filePath = baseDir + File.separator + fileName;
@@ -182,6 +187,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             writer.writeNext(currentLine);
         }
         writer.close();
+
+        Toast.makeText(this, "Log files saved to: " + filePath, Toast.LENGTH_LONG).show();
     }
 
     @Override
