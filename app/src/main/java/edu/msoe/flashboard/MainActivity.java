@@ -51,19 +51,17 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
-    private Realm coordDB;
+    public Realm coordDB;
     private LocationCallback locationCallback;
     private static final float CONVERSION_FACTOR = 2.23694f;
     private TextView speedTB;
     private static final int PERMISSIONS_ALL = 1;
     private GMeter gMeter;
     private float[] accelXZ;
-    private String currentTime;
     private boolean isLogging = false;
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
 
     /**
      * This method is run when the app is first launched and sets everything up
