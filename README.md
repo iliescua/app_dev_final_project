@@ -1,4 +1,4 @@
-# app_dev_final_project
+# FlashBoard
 
 ## Authors
 * Andrew Iliescu
