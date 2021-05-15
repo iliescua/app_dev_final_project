@@ -1,17 +1,17 @@
 package edu.msoe.flashboard;
 
-        import android.content.Context;
-        import android.graphics.Bitmap;
-        import android.graphics.Canvas;
-        import android.graphics.Color;
-        import android.graphics.Paint;
-        import android.graphics.PorterDuff;
-        import android.graphics.PorterDuffXfermode;
-        import android.graphics.RectF;
-        import android.hardware.SensorManager;
-        import android.util.AttributeSet;
-        import android.util.Log;
-        import android.view.View;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
+import android.hardware.SensorManager;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 
 /*
  * AccelerationExplorer
@@ -33,7 +33,7 @@ package edu.msoe.flashboard;
 /**
  * Draws an analog gauge for displaying acceleration measurements in two-space
  * from device sensors.
- *
+ * <p>
  * Note that after Android 4.0 TextureView exists, as does SurfaceView for
  * Android 3.0 which won't hog the UI thread like View will. This should only be
  * used with devices or certain libraries that require View.
@@ -42,8 +42,7 @@ package edu.msoe.flashboard;
  * @version %I%, %G%
  * http://developer.android.com/reference/android/view/View.html
  */
-public final class GMeter extends View
-{
+public final class GMeter extends View {
     private static final String tag = GMeter.class.getSimpleName();
 
     // holds the cached static part
@@ -75,8 +74,7 @@ public final class GMeter extends View
      *
      * @param context
      */
-    public GMeter(Context context)
-    {
+    public GMeter(Context context) {
         super(context);
         init();
     }
@@ -87,8 +85,7 @@ public final class GMeter extends View
      * @param context
      * @param attrs
      */
-    public GMeter(Context context, AttributeSet attrs)
-    {
+    public GMeter(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
@@ -100,8 +97,7 @@ public final class GMeter extends View
      * @param attrs
      * @param defStyle
      */
-    public GMeter(Context context, AttributeSet attrs, int defStyle)
-    {
+    public GMeter(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
@@ -109,29 +105,21 @@ public final class GMeter extends View
     /**
      * Update the measurements for the point.
      *
-     * @param x
-     *            the x-axis
-     * @param y
-     *            the y-axis
-
+     * @param x the x-axis
+     * @param y the y-axis
      */
-    public void updatePoint(float x, float y)
-    {
+    public void updatePoint(float x, float y) {
         // Enforce a limit of 1g or 9.8 m/s^2
-        if (x > SensorManager.GRAVITY_EARTH)
-        {
+        if (x > SensorManager.GRAVITY_EARTH) {
             x = SensorManager.GRAVITY_EARTH;
         }
-        if (x < -SensorManager.GRAVITY_EARTH)
-        {
+        if (x < -SensorManager.GRAVITY_EARTH) {
             x = -SensorManager.GRAVITY_EARTH;
         }
-        if (y > SensorManager.GRAVITY_EARTH)
-        {
+        if (y > SensorManager.GRAVITY_EARTH) {
             y = SensorManager.GRAVITY_EARTH;
         }
-        if (y < -SensorManager.GRAVITY_EARTH)
-        {
+        if (y < -SensorManager.GRAVITY_EARTH) {
             y = -SensorManager.GRAVITY_EARTH;
         }
 
@@ -144,16 +132,14 @@ public final class GMeter extends View
     /**
      * Initialize the members of the instance.
      */
-    private void init()
-    {
+    private void init() {
         initDrawingTools();
     }
 
     /**
      * Initialize the drawing related members of the instance.
      */
-    private void initDrawingTools()
-    {
+    private void initDrawingTools() {
         rimRect = new RectF(0.1f, 0.1f, 0.9f, 0.9f);
 
         scaleX = ((rimRect.right - rimRect.left) / (SensorManager.GRAVITY_EARTH * 2));
@@ -209,8 +195,7 @@ public final class GMeter extends View
      * Measure the device screen size to scale the canvas correctly.
      */
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
-    {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 
@@ -232,14 +217,10 @@ public final class GMeter extends View
      * @param size
      * @return
      */
-    private int chooseDimension(int mode, int size)
-    {
-        if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY)
-        {
+    private int chooseDimension(int mode, int size) {
+        if (mode == MeasureSpec.AT_MOST || mode == MeasureSpec.EXACTLY) {
             return size;
-        }
-        else
-        { // (mode == MeasureSpec.UNSPECIFIED)
+        } else { // (mode == MeasureSpec.UNSPECIFIED)
             return getPreferredSize();
         }
     }
@@ -249,8 +230,7 @@ public final class GMeter extends View
      *
      * @return default preferred size.
      */
-    private int getPreferredSize()
-    {
+    private int getPreferredSize() {
         return 300;
     }
 
@@ -259,8 +239,7 @@ public final class GMeter extends View
      *
      * @param canvas
      */
-    private void drawGauge(Canvas canvas)
-    {
+    private void drawGauge(Canvas canvas) {
 
         // first, draw the metallic body
         canvas.drawOval(rimRect, rimPaint);
@@ -283,8 +262,7 @@ public final class GMeter extends View
      *
      * @param canvas
      */
-    private void drawPoint(Canvas canvas)
-    {
+    private void drawPoint(Canvas canvas) {
         canvas.save();
         pointPaint.setColor(this.color);
         canvas.drawCircle(this.x, this.y, 0.025f, pointPaint);
@@ -296,22 +274,17 @@ public final class GMeter extends View
      *
      * @param canvas
      */
-    private void drawBackground(Canvas canvas)
-    {
+    private void drawBackground(Canvas canvas) {
         // Use the cached background bitmap.
-        if (background == null)
-        {
+        if (background == null) {
             Log.w(tag, "Background not created");
-        }
-        else
-        {
+        } else {
             canvas.drawBitmap(background, 0, 0, backgroundPaint);
         }
     }
 
     @Override
-    protected void onDraw(Canvas canvas)
-    {
+    protected void onDraw(Canvas canvas) {
         drawBackground(canvas);
 
         float scale = (float) getWidth();
@@ -327,8 +300,7 @@ public final class GMeter extends View
      * Indicate the desired size of the canvas has changed.
      */
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh)
-    {
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         Log.d(tag, "Size changed to " + w + "x" + h);
 
         regenerateBackground();
@@ -339,11 +311,9 @@ public final class GMeter extends View
      * of the screen has changed. The background will be cached and can be
      * reused without needing to redraw it.
      */
-    private void regenerateBackground()
-    {
+    private void regenerateBackground() {
         // free the old bitmap
-        if (background != null)
-        {
+        if (background != null) {
             background.recycle();
         }
 

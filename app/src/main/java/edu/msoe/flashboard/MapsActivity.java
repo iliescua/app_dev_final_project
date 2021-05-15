@@ -12,16 +12,24 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import edu.msoe.flashboard.databinding.ActivityMapsBinding;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+    private Realm coordDB;
+    private RealmResults<CoordData> results;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Get data from MainActivity
+        Realm.init(getApplicationContext());
+        coordDB = Realm.getDefaultInstance();
+        results = coordDB.where(CoordData.class).findAll();
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -44,10 +52,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        int count = 1;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //Move camera to users starting location and create line detailing route ran
+        for (CoordData data : results) {
+            LatLng current = new LatLng(data.getLatitude(), data.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(current).title("Point: " + count).snippet(data.toString()));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(current));
+            count++;
+        }
     }
 }

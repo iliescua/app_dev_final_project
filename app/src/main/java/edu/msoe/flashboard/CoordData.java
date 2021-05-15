@@ -1,5 +1,7 @@
 package edu.msoe.flashboard;
 
+import androidx.annotation.NonNull;
+
 import io.realm.RealmObject;
 
 public class CoordData extends RealmObject {
@@ -12,8 +14,6 @@ public class CoordData extends RealmObject {
     private double accelX;
     private double accelY;
     private double accelZ;
-
-
 
     private String timeStamp;
 
@@ -96,5 +96,11 @@ public class CoordData extends RealmObject {
 
     public void setSpeed(double speed) {
         this.speed = speed;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Lat: " + getLatitude() + " Long: " + getLongitude() + " Alt: " + getAltitude();
     }
 }

@@ -20,7 +20,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -91,8 +90,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Realm.init(this);
         coordDB = Realm.getDefaultInstance();
         accelXZ = new float[4];
-
-
 
         //Register accelerometer sensor
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
