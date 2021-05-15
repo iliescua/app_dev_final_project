@@ -99,10 +99,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         //Register location requests
         LocationRequest locationRequest = LocationRequest.create();
-
         // 0 = literally as fast as it can
         locationRequest.setInterval(0);
-
         // We don't really need this, in fact we want as steady as possible
         //locationRequest.setFastestInterval(1);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
