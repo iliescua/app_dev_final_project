@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // 0 = literally as fast as it can
         locationRequest.setInterval(0);
         // We don't really need this, in fact we want as steady as possible
-        //locationRequest.setFastestInterval(1);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         startLocationUpdates();
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 //Set logging flag to false
             }  // Enable logging if disabled -> enabled
             //Set logging flag to true
-
             isLogging = simpleSwitch.isChecked();
         });
     }
@@ -212,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location location = locationResult.getLastLocation();
-
                 //Display the mph to the screen
                 speedTB.setText(Integer.toString((int) (location.getSpeed() * CONVERSION_FACTOR)));
 
