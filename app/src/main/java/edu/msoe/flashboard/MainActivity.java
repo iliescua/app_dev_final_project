@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         //Check to ensure necessary permissions provided
         if (!hasPermissions()) {
             Toast.makeText(this, "Please allow permissions if you haven't already", Toast.LENGTH_LONG).show();
@@ -145,7 +146,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    //Save current DB to file
+    /**
+     * Saves DB info to a CSV file on the device
+     *
+     * @throws IOException since files are being manipulated an IOException is possible
+     */
     public void saveDBToFile() throws IOException {
         Context context = getApplicationContext();
 
@@ -178,8 +183,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //Loop through the database and write to file as we go
         for (CoordData data : session) {
             String[] currentLine = {data.getTimeStamp(), Double.toString(data.getLatitude()),
-                    Double.toString(data.getLongitude()), Double.toString(data.getAltitude()), Double.toString(data.getBearing()),
-                    Double.toString(data.getSpeed()), Double.toString(data.getAccelX()), Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
+                    Double.toString(data.getLongitude()), Double.toString(data.getAltitude()),
+                    Double.toString(data.getBearing()),
+                    Double.toString(data.getSpeed()), Double.toString(data.getAccelX()),
+                    Double.toString(data.getAccelY()), Double.toString(data.getAccelZ())};
             //new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").formatter.format(data.getTimeStamp())
             writer.writeNext(currentLine);
         }
@@ -188,6 +195,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toast.makeText(this, "Log files saved to: " + filePath, Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Method to update sensor accuracy (Not implemented in this project)
+     *
+     * @param sensor   reference to the sensor being targeted
+     * @param accuracy the numerical value for the sensors' accuracy
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
@@ -246,10 +259,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.item_navMap){
+        if (item.getItemId() == R.id.item_navMap) {
+            //Launch GMaps Activity
             Intent intent = new Intent(this, MapsActivity.class);
             startActivity(intent);
-        } else if (item.getItemId() == R.id.item_clearDB){
+        } else if (item.getItemId() == R.id.item_clearDB) {
             //Clear out the database
             Toast.makeText(this, "Database Cleared!", Toast.LENGTH_LONG).show();
             RealmResults<CoordData> session = coordDB.where(CoordData.class).findAll();
