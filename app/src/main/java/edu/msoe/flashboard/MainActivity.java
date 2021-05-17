@@ -9,7 +9,6 @@
  */
 package edu.msoe.flashboard;
 
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private GMeter gMeter;
     private float[] accelXZ;
     private boolean isLogging = false;
-
 
     /**
      * This method is run when the app is first launched and sets everything up
@@ -160,12 +158,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             writer = new CSVWriter(new FileWriter(filePath));
         }
-
         //Create a header line in the CSV file
         String[] firstLine = {"Timestamp (ms)", "Latitude", "Longitude", "Altitude (m)", "Bearing (Degrees)",
                 "Speed (mph)", "Accel X-Axis (m/s^2)", "Accel Y-Axis (m/s^2)", "Accel Z-Axis (m/s^2)"};
         writer.writeNext(firstLine);
-
         // Grab all data from the DB (coordDB)
         RealmResults<CoordData> session = coordDB.where(CoordData.class).findAll();
 
@@ -261,7 +257,4 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         return true;
     }
-
-
-
 }
