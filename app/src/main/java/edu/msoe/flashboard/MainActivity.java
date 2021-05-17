@@ -58,11 +58,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float[] accelXZ;
     private boolean isLogging = false;
 
-    /**
-     * This method is run when the app is first launched and sets everything up
-     *
-     * @param savedInstanceState the current saved state of the app
-     */
     @SuppressLint({"MissingPermission", "UseSwitchCompatOrMaterialCode"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
