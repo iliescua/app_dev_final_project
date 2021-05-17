@@ -1,4 +1,14 @@
+/*
+ * CoordData
+ * Author: Andrew Iliescu, Sam Jansen
+ * Date: 5/15/21
+ * This creates a CoordData object that has the attributes we wish
+ * to store to the Realm DB in order to easily
+ * pass information between multiple Activities
+ */
 package edu.msoe.flashboard;
+
+import androidx.annotation.NonNull;
 
 import io.realm.RealmObject;
 
@@ -13,17 +23,9 @@ public class CoordData extends RealmObject {
     private double accelY;
     private double accelZ;
 
-
-
-    private long timeStamp;
+    private String timeStamp;
 
     public CoordData() {
-    }
-
-    public CoordData(double longitude, double latitude, double altitude) {
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.altitude = altitude;
     }
 
     public double getLongitude() {
@@ -74,11 +76,11 @@ public class CoordData extends RealmObject {
         this.accelZ = accelZ;
     }
 
-    public long getTimeStamp() {
+    public String getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(long timeStamp) {
+    public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -96,5 +98,11 @@ public class CoordData extends RealmObject {
 
     public void setSpeed(double speed) {
         this.speed = speed;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Lat: " + getLatitude() + " Long: " + getLongitude() + " Alt: " + getAltitude();
     }
 }
