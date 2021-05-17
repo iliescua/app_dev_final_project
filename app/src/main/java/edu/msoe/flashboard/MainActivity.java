@@ -9,11 +9,10 @@
  */
 package edu.msoe.flashboard;
 
-import android.Manifest;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -32,7 +31,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
+
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -56,13 +55,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private LocationCallback locationCallback;
     private static final float CONVERSION_FACTOR = 2.23694f;
     private TextView speedTB;
-    private static final int PERMISSIONS_ALL = 1;
     private GMeter gMeter;
     private float[] accelXZ;
     private boolean isLogging = false;
-    private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+
 
     /**
      * This method is run when the app is first launched and sets everything up
@@ -77,20 +73,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        //Check to ensure necessary permissions provided
-        if (!hasPermissions()) {
-            Toast.makeText(this, "Please allow permissions if you haven't already", Toast.LENGTH_LONG).show();
-            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSIONS_ALL);
-        }
         gMeter = findViewById(R.id.g_meter);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Switch simpleSwitch = findViewById(R.id.switch_logging);
         speedTB = findViewById(R.id.speedTB);
-        FusedLocationProviderClient flpc = LocationServices.getFusedLocationProviderClient(this);
+
         Realm.init(this);
         coordDB = Realm.getDefaultInstance();
         accelXZ = new float[4];
+
+        FusedLocationProviderClient flpc = LocationServices.getFusedLocationProviderClient(this);
 
         //Register accelerometer sensor
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -269,22 +262,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return true;
     }
 
-    /**
-     * Helper method to check whether necessary permissions are provided
-     *
-     * @return boolean expression based on whether permissions are provided
-     */
-    private boolean hasPermissions() {
-        boolean containsPermission = true;
-        if (getApplicationContext() != null && PERMISSIONS != null) {
-            for (String permission : PERMISSIONS) {
-                containsPermission = ActivityCompat.checkSelfPermission(getApplicationContext(),
-                        permission) == PackageManager.PERMISSION_GRANTED;
-                if (!containsPermission) {
-                    break;
-                }
-            }
-        }
-        return containsPermission;
-    }
+
+
 }

@@ -6,4 +6,7 @@
     <string name="map_view">Map View</string>
     <string name="clear_stored_info">Clear Stored Info</string>
     <string name="title_activity_maps">Map</string>
+    <string name="google_maps_key">AIzaSyB4mNhHEEEJxgTx8_93i6ZX5KB0oZuKbS8</string>
+    <string name="start_app">Start App!</string>
+    <string name="accept_perms">Accept permissions before starting!</string>
 </resources>
