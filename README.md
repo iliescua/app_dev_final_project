@@ -22,7 +22,7 @@ keep an up to date record of this information.
 * Target SDK Version: 30
 
 ## Build Instructions
-* Have to Run/Compile twice due to some weird build error
+* May have to Run/Compile twice due to some weird build error
 * Gradle Plugin Version: 4.2.0
 * Gradle Version: 6.7.1
 * Compile SDK Version: 30
