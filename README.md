@@ -18,8 +18,17 @@ keep an up to date record of this information.
 * See edu.msoe.flashboard.GMeter.java comments for more details
 
 ## SDK Version
-* Minimum SDK Android 6.0 (Marshmallow) API 23
+* Minimum SDK Version: 23
+* Target SDK Version: 30
+
+## Build Instructions
+* Have to Run/Compile twice due to some weird build error
+* Gradle Plugin Version: 4.2.0
+* Gradle Version: 6.7.1
+* Compile SDK Version: 30
+* Build Tools Version: 30.0.3
+
 
 ## Executing program and testing
- * Designed and built on the Google Pixel 4 AVD
- * Tested on Google Pixel 4a and OnePlus 6T physical devices
+ * Designed and built on the Google Pixel 4 AVD (API 29)
+ * Tested on Google Pixel 4a (API 30) and OnePlus 6T (API 29) physical devices
