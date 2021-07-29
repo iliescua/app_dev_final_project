@@ -32,11 +32,3 @@ keep an up to date record of this information.
 ## Executing program and testing
  * Designed and built on the Google Pixel 4 AVD (API 29)
  * Tested on Google Pixel 4a (API 30) and OnePlus 6T (API 29) physical devices
-
-## Demos
- * This is a short video showing a users perspective while driving
-https://user-images.githubusercontent.com/49252663/127532375-39459637-1231-4158-8254-506641f31436.mov
-
-
-
-
